@@ -2,11 +2,6 @@
 
 public class LicenseGenerator
 {
-	private string AuthorName { get; }
-	private string ProgramName { get; }
-	private int Year { get; }
-	public string OutputPath { get; }
-
 	public LicenseGenerator(string authorName, string programName, int year)
 	{
 		AuthorName = authorName;
@@ -14,6 +9,11 @@ public class LicenseGenerator
 		Year = year;
 		OutputPath = Path.Join(Environment.CurrentDirectory, "Output", ProgramName, "LICENSE");
 	}
+
+	private string AuthorName { get; }
+	private string ProgramName { get; }
+	private int Year { get; }
+	public string OutputPath { get; }
 
 	public void Generate(string template)
 	{
