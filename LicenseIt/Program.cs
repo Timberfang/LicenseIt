@@ -1,41 +1,78 @@
-﻿using Spectre.Console;
+﻿using System.CommandLine;
+using System.Text;
 
 namespace LicenseIt;
 
 internal static class Program
 {
-	private static void Main()
+	private static async Task<int> Main(string[] args)
 	{
-		LicenseGenerator generator = new (
-			AnsiConsole.Ask<string>("Name of the author(s):"),
-			AnsiConsole.Ask<string>("Name of the project:"),
-			AnsiConsole.Ask<int>("Year of release, or current year if not released:")
-		);
-		
-		// Get license types (e.g. Media, Fonts, Software)
-		// GetFileNameWithoutExtension works for getting final section of directory path as well
+		RootCommand rootCommand = new("License creator.");
 		string licenseTemplatePath = Path.Join(Environment.CurrentDirectory, "Templates");
-		string chosenType = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.AddChoices(Directory.GetDirectories(licenseTemplatePath))
-			.UseConverter(Path.GetFileNameWithoutExtension));
+		Option<string> authorOption = new("--author-name")
+		{
+			IsRequired = true,
+			Description = "Name(s) of the author(s). If multiple names are needed, separate them by commas."
+		};
+		Option<string> projectOption = new("--project-name")
+		{
+			IsRequired = true,
+			Description = "Name of the project the license will be applied to."
+		};
+		Option<int> yearOption = new("--year")
+		{
+			Description = "Year when development began on the project."
+		};
+		Option<string> licenseOption = new("--license-name")
+		{
+			IsRequired = true,
+			Description = "Name of the license (e.g. MIT). To view all valid license names, use the 'list' argument."
+		};
+		yearOption.SetDefaultValue(DateTime.Now.Year);
 
-		// Get license templates
-		string[] licenses = Directory.GetFiles(chosenType, "*.txt");
-		string chosenLicense = AnsiConsole.Prompt(new SelectionPrompt<string>()
-			.AddChoices(licenses)
-			.UseConverter(Path.GetFileNameWithoutExtension));
+		Command createCommand = new("new", "Create a new LICENSE file")
+		{
+			authorOption, projectOption, yearOption, licenseOption
+		};
+		Command listCommand = new("list", "List all available templates");
+		rootCommand.AddCommand(createCommand);
+		rootCommand.AddCommand(listCommand);
 
 		// Create license from template
-		if (File.Exists(generator.OutputPath))
+		createCommand.SetHandler((authorName, projectName, year, license) =>
+			{
+				LicenseGenerator generator = new(authorName, projectName, year);
+				if (File.Exists(generator.OutputPath))
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.Error.WriteLine("License already exists: " + generator.OutputPath);
+					Console.ResetColor();
+				}
+				else
+				{
+					// string template = File.ReadAllText(
+					// 	Directory.GetFiles(licenseTemplatePath, $"{license}.txt", SearchOption.AllDirectories).First());
+					string template = Directory
+						.GetFiles(licenseTemplatePath, $"{license}.txt", SearchOption.AllDirectories).First();
+					generator.Generate(template);
+					Console.WriteLine($"License generated at {generator.OutputPath}.");
+				}
+			},
+			authorOption, projectOption, yearOption, licenseOption);
+
+		// List available templates
+		listCommand.SetHandler(() =>
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.Error.WriteLine("License already exists: " + generator.OutputPath);
-			Console.ResetColor();
-		}
-		else
-		{
-			generator.Generate(chosenLicense);
-			AnsiConsole.MarkupLine($"License generated at {generator.OutputPath}.");
-		}
+			string[] licenses = Directory.GetFiles(licenseTemplatePath, "*.txt", SearchOption.AllDirectories);
+			StringBuilder output = new();
+			foreach (string license in licenses)
+			{
+				output.AppendLine(Path.GetFileNameWithoutExtension(license));
+			}
+
+			Console.WriteLine(output.ToString());
+		});
+
+		return await rootCommand.InvokeAsync(args);
 	}
 }
