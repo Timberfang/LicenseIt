@@ -30,7 +30,7 @@ internal static class LicenseService
 		// TODO: Support author email
 		string licenseText = template
 			.Replace(@"${AUTHOR_NAME}", authorName)
-			.Replace(@"${PROGRAM_NAME}", projectName)
+			.Replace(@"${PROJECT_NAME}", projectName)
 			.Replace(@"${YEAR}", year.ToString()
 			);
 		try

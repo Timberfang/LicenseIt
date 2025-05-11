@@ -26,7 +26,7 @@ License templates can be added or updated in the `Templates` directory:
 
 1. Anywhere within that directory or its children, create a `.txt` file for your license
 2. Paste the full contents of your license in the file.
-3. Replace any placeholders for author name with `${AUTHOR_NAME}`, project name with `${PROGRAM_NAME}`, and year with `${YEAR}`.
+3. Replace any placeholders for author name with `${AUTHOR_NAME}`, project name with `${PROJECT_NAME}`, and year with `${YEAR}`.
 
 Please ensure that your license file's name is unique. While the existing licenses use the [SPDX Codes](https://spdx.org/licenses), any name will be accepted by the program.
 
