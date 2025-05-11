@@ -56,7 +56,7 @@ internal static class LicenseService
 		Generate(authorName, projectName, File.ReadAllText(template), year, destination);
 	}
 
-	public static void GenerateFromSpdx(string authorName, string projectName, string code, int year = -1,
+	internal static void GenerateFromSpdx(string authorName, string projectName, string code, int year = -1,
 		string destination = "")
 	{
 		if (!List().Contains(code))
