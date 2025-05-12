@@ -17,12 +17,12 @@ internal static class Program
 			IsRequired = true, Description = "Name of the project the license will be applied to."
 		};
 		Option<int> yearOption = new("--year") { Description = "Year when development began on the project." };
-		Option<string> emailOption = new("--email") { Description = "Email address(es) of the author(s)." };
+		Option<string> emailOption = new("--email-address") { Description = "Email address(es) of the author(s)." };
 		Option<string> licenseOption = new("--license-name")
 		{
 			IsRequired = true,
 			Description =
-				"Name of the license (e.g. MIT). To view all valid license names, use the 'list' argument."
+				"Name of the license (e.g. MIT). To view all valid license names, use the 'list' command."
 		};
 		Option<string> outputOption = new("--output")
 		{
@@ -30,6 +30,17 @@ internal static class Program
 				"Path to the output file. Defaults to ${working-directory} -> ${project-name} -> LICENSE."
 		};
 		yearOption.SetDefaultValue(DateTime.Now.Year);
+		authorOption.AddAlias("--author");
+		authorOption.AddAlias("-a");
+		projectOption.AddAlias("--project");
+		projectOption.AddAlias("-p");
+		emailOption.AddAlias("--email");
+		emailOption.AddAlias("-e");
+		licenseOption.AddAlias("--license");
+		licenseOption.AddAlias("--spdx");
+		licenseOption.AddAlias("-l");
+		outputOption.AddAlias("--destination");
+		outputOption.AddAlias("-o");
 
 		Command createCommand = new("new", "Create a new LICENSE file")
 		{
@@ -61,7 +72,7 @@ internal static class Program
 					ErrorHandler.WriteError(e.Message);
 				}
 			},
-			authorOption, projectOption, yearOption, emailOption, licenseOption, destinationOption);
+			authorOption, projectOption, yearOption, emailOption, licenseOption, outputOption);
 
 		// List available templates
 		listCommand.SetHandler(() => { Console.WriteLine(string.Join(Environment.NewLine, LicenseService.List())); });
