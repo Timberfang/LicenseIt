@@ -69,6 +69,6 @@ internal static class LicenseService
 		Generate(authorName, projectName, template, year, destination);
 	}
 
-	internal static string?[] List() => Directory.GetFiles(s_licenseTemplatePath, "*.txt", SearchOption.AllDirectories)
-		.Select(Path.GetFileNameWithoutExtension).ToArray();
+	internal static IEnumerable<string?> List() => Directory.GetFiles(s_licenseTemplatePath, "*.txt", SearchOption.AllDirectories)
+		.Select(Path.GetFileNameWithoutExtension);
 }
