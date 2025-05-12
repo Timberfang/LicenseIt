@@ -17,6 +17,7 @@ internal static class Program
 			IsRequired = true, Description = "Name of the project the license will be applied to."
 		};
 		Option<int> yearOption = new("--year") { Description = "Year when development began on the project." };
+		Option<string> emailOption = new("--email") { Description = "Email address(es) of the author(s)." };
 		Option<string> licenseOption = new("--license-name")
 		{
 			IsRequired = true,
@@ -28,7 +29,7 @@ internal static class Program
 
 		Command createCommand = new("new", "Create a new LICENSE file")
 		{
-			authorOption, projectOption, yearOption, licenseOption, destinationOption
+			authorOption, projectOption, yearOption, emailOption, licenseOption, destinationOption
 		};
 		Command listCommand = new("list", "List all available templates");
 		rootCommand.AddCommand(createCommand);
@@ -36,12 +37,12 @@ internal static class Program
 
 		// Create license from template
 		createCommand.SetHandler(
-			(authorName, projectName, year, license, destination) =>
+			(authorName, projectName, year, email, license, destination) =>
 			{
-				if (!String.IsNullOrEmpty(destination)) { destination = Path.Join(Environment.CurrentDirectory, "Output", projectName, "LICENSE"); }
+				if (String.IsNullOrEmpty(destination)) { destination = Path.Join(Environment.CurrentDirectory, "Output", projectName, "LICENSE"); }
 				try
 				{
-					LicenseService.GenerateFromSpdx(authorName, projectName, license, year, destination);
+					LicenseService.GenerateFromSpdx(authorName, projectName, license, year, email, destination);
 				}
 				catch (ArgumentException e)
 				{
@@ -52,7 +53,7 @@ internal static class Program
 					ErrorHandler.WriteError(e.Message);
 				}
 			},
-			authorOption, projectOption, yearOption, licenseOption, destinationOption);
+			authorOption, projectOption, yearOption, emailOption, licenseOption, destinationOption);
 
 		// List available templates
 		listCommand.SetHandler(() => { Console.WriteLine(string.Join(Environment.NewLine, LicenseService.List())); });

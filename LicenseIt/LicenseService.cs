@@ -4,7 +4,7 @@ internal static class LicenseService
 {
 	private static readonly string s_licenseTemplatePath = Path.Join(Environment.CurrentDirectory, "Templates");
 
-	private static void Generate(string authorName, string projectName, string template, int year = -1,
+	private static void Generate(string authorName, string projectName, string template, int year = -1, string email = "",
 		string destination = "")
 	{
 		switch (year)
@@ -27,12 +27,11 @@ internal static class LicenseService
 			throw new ArgumentException($"'{destination}' already exists.");
 		}
 
-		// TODO: Support author email
 		string licenseText = template
 			.Replace(@"${AUTHOR_NAME}", authorName)
+			.Replace(@"${AUTHOR_EMAIL}", email)
 			.Replace(@"${PROJECT_NAME}", projectName)
-			.Replace(@"${YEAR}", year.ToString()
-			);
+			.Replace(@"${YEAR}", year.ToString());
 		try
 		{
 			Directory.CreateDirectory(Directory.GetParent(destination)?.FullName ?? throw new NullReferenceException());
@@ -45,7 +44,7 @@ internal static class LicenseService
 		}
 	}
 
-	internal static void GenerateFromFile(string authorName, string projectName, string template, int year = -1,
+	internal static void GenerateFromFile(string authorName, string projectName, string template, int year = -1, string email = "",
 		string destination = "")
 	{
 		if (!File.Exists(template))
@@ -53,10 +52,10 @@ internal static class LicenseService
 			throw new FileNotFoundException($"Template file '{template}' not found.");
 		}
 
-		Generate(authorName, projectName, File.ReadAllText(template), year, destination);
+		Generate(authorName, projectName, File.ReadAllText(template), year, email, destination);
 	}
 
-	internal static void GenerateFromSpdx(string authorName, string projectName, string code, int year = -1,
+	internal static void GenerateFromSpdx(string authorName, string projectName, string code, int year = -1, string email = "",
 		string destination = "")
 	{
 		if (!List().Contains(code))
@@ -66,7 +65,7 @@ internal static class LicenseService
 
 		string template = File.ReadAllText(Directory
 			.GetFiles(s_licenseTemplatePath, $"{code}.txt", SearchOption.AllDirectories).First());
-		Generate(authorName, projectName, template, year, destination);
+		Generate(authorName, projectName, template, year, email, destination);
 	}
 
 	internal static IEnumerable<string?> List() => Directory.GetFiles(s_licenseTemplatePath, "*.txt", SearchOption.AllDirectories)
