@@ -19,7 +19,7 @@ internal static class LicenseService
 
 		if (destination == "")
 		{
-			destination = Path.Join(Environment.CurrentDirectory, "Output", projectName, "LICENSE");
+			destination = Path.Join(Environment.CurrentDirectory, projectName, "LICENSE");
 		}
 
 		if (File.Exists(destination))

@@ -24,7 +24,11 @@ internal static class Program
 			Description =
 				"Name of the license (e.g. MIT). To view all valid license names, use the 'list' argument."
 		};
-		Option<string> destinationOption = new("--destination") { Description = "Path to the output file." };
+		Option<string> outputOption = new("--output")
+		{
+			Description =
+				"Path to the output file. Defaults to ${working-directory} -> ${project-name} -> LICENSE."
+		};
 		yearOption.SetDefaultValue(DateTime.Now.Year);
 
 		Command createCommand = new("new", "Create a new LICENSE file")
@@ -39,7 +43,11 @@ internal static class Program
 		createCommand.SetHandler(
 			(authorName, projectName, year, email, license, destination) =>
 			{
-				if (String.IsNullOrEmpty(destination)) { destination = Path.Join(Environment.CurrentDirectory, "Output", projectName, "LICENSE"); }
+				if (string.IsNullOrEmpty(destination))
+				{
+					destination = Path.Join(Environment.CurrentDirectory, projectName, "LICENSE");
+				}
+
 				try
 				{
 					LicenseService.GenerateFromSpdx(authorName, projectName, license, year, email, destination);
