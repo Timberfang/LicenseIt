@@ -2,7 +2,7 @@
 
 internal static class LicenseService
 {
-	private static readonly string s_licenseTemplatePath = Path.Join(Environment.CurrentDirectory, "Templates");
+	private static readonly string s_licenseTemplatePath = Path.Join(AppContext.BaseDirectory, "Templates");
 
 	private static void Generate(string authorName, string projectName, string template, int year = -1, string email = "",
 		string destination = "")
