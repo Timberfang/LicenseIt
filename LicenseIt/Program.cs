@@ -44,7 +44,12 @@ internal static class Program
 
 		Command createCommand = new("new", "Create a new LICENSE file")
 		{
-			authorOption, projectOption, yearOption, emailOption, licenseOption, destinationOption
+			authorOption,
+			projectOption,
+			yearOption,
+			emailOption,
+			licenseOption,
+			outputOption
 		};
 		Command listCommand = new("list", "List all available templates");
 		rootCommand.AddCommand(createCommand);

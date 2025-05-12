@@ -4,7 +4,8 @@ internal static class LicenseService
 {
 	private static readonly string s_licenseTemplatePath = Path.Join(AppContext.BaseDirectory, "Templates");
 
-	private static void Generate(string authorName, string projectName, string template, int year = -1, string email = "",
+	private static void Generate(string authorName, string projectName, string template, int year = -1,
+		string email = "",
 		string destination = "")
 	{
 		switch (year)
@@ -44,7 +45,8 @@ internal static class LicenseService
 		}
 	}
 
-	internal static void GenerateFromFile(string authorName, string projectName, string template, int year = -1, string email = "",
+	internal static void GenerateFromFile(string authorName, string projectName, string template, int year = -1,
+		string email = "",
 		string destination = "")
 	{
 		if (!File.Exists(template))
@@ -55,7 +57,8 @@ internal static class LicenseService
 		Generate(authorName, projectName, File.ReadAllText(template), year, email, destination);
 	}
 
-	internal static void GenerateFromSpdx(string authorName, string projectName, string code, int year = -1, string email = "",
+	internal static void GenerateFromSpdx(string authorName, string projectName, string code, int year = -1,
+		string email = "",
 		string destination = "")
 	{
 		if (!List().Contains(code))
@@ -68,6 +71,7 @@ internal static class LicenseService
 		Generate(authorName, projectName, template, year, email, destination);
 	}
 
-	internal static IEnumerable<string?> List() => Directory.GetFiles(s_licenseTemplatePath, "*.txt", SearchOption.AllDirectories)
+	internal static IEnumerable<string?> List() => Directory
+		.GetFiles(s_licenseTemplatePath, "*.txt", SearchOption.AllDirectories)
 		.Select(Path.GetFileNameWithoutExtension);
 }
